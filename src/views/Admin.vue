@@ -16,33 +16,29 @@
           <!-- sidebar-header  -->
           <div class="sidebar-item sidebar-header">
             <div class="user-pic">
-              <img class="img-responsive img-rounded" src="/img/png/user.png" alt="User picture" />
+              <img
+                class="img-responsive img-rounded"
+                src="../assets/admin/user.svg"
+                alt="User picture"
+              />
             </div>
             <div class="user-info">
               <span class="user-name">
-                Souiri
-                <strong>Hamza</strong>
+                <strong>{{profile.name}}</strong>
               </span>
-              <span class="user-role">email</span>
-              <span class="user-status">
+              <span class="user-role">{{email}}</span>
+              <span class="user-status" v-if="emailVerified">
                 <i class="fa fa-circle"></i>
-                <span>Online</span>
+                <span>Verified</span>
+              </span>
+              <span class="user-status" v-else>
+                <i class="fa fa-circle" style="color:red;"></i>
+                <span>Unverified</span>
               </span>
             </div>
           </div>
           <!-- sidebar-search  -->
-          <div class="sidebar-item sidebar-search">
-            <div>
-              <div class="input-group">
-                <input type="text" class="form-control search-menu" placeholder="Search..." />
-                <div class="input-group-append">
-                  <span class="input-group-text">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+
           <!-- sidebar-menu  -->
           <div class="sidebar-item sidebar-menu">
             <ul>
@@ -51,34 +47,29 @@
               </li>
 
               <li>
-                <router-link to="/admin/overview">
-                  <i class="fa fa-chart-line"></i>
-                  <span>Overview</span>
+                <router-link to="/admin/profile2">
+                  <i class="fa fa-user"></i>
+                  <span>Profil</span>
                 </router-link>
               </li>
+
               <li>
                 <router-link to="/admin/products">
                   <i class="fab fa-amazon"></i>
-                  <span>Products</span>
+                  <span>Articles</span>
                 </router-link>
               </li>
               <li>
                 <router-link to="/admin/orders">
                   <i class="fa fa-shopping-cart"></i>
-                  <span>Orders</span>
+                  <span>Commandes</span>
                 </router-link>
               </li>
 
               <li>
-                <router-link to="/admin/profile">
-                  <i class="fa fa-user"></i>
-                  <span>Profile</span>
-                </router-link>
-              </li>
-              <li>
                 <a href="#" @click="logout()">
                   <i class="fa fa-power-off"></i>
-                  <span>Logout</span>
+                  <span>Se Déconnecter</span>
                 </a>
               </li>
             </ul>
@@ -94,26 +85,54 @@
     </div>
     <!-- page-wrapper -->
   </div>
-  
 </template>
 
 <script>
-import {fb} from '../firebase';
+import { fb, db } from "../firebase";
+
 export default {
   name: "admin",
+  firestore() {
+    const user = fb.auth().currentUser;
+    return {
+      profile: db.collection("profiles").doc(user.uid)
+    };
+  },
+  data() {
+    return {
+      profile: {
+        name: null
+      },
+      email: null,
+      uid: null,
+      emailVerified: null
+    };
+  },
   components: {},
   methods: {
     toggleMenu() {
       $(".page-wrapper").toggleClass("toggled");
     },
     logout() {
-      fb.auth().signOut()
-      .then(() => {
-        this.$router.replace('/');
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+      fb.auth()
+        .signOut()
+        .then(() => {
+          this.$router.replace("/");
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  },
+  created() {
+    var user = fb.auth().currentUser;
+    var name, email;
+
+    if (user != null) {
+      this.name = user.displayName;
+      this.email = user.email;
+      this.uid = user.uid;
+      this.emailVerified = user.emailVerified;
     }
   }
 };

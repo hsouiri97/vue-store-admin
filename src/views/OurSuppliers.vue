@@ -6,9 +6,8 @@
 </template>
 
 <script>
-  export default {
-    name: "our-suppliers",
-    components: {
-    }
-  }
+export default {
+  name: "our-suppliers",
+  components: {}
+};
 </script>

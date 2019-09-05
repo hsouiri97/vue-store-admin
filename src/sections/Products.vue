@@ -1,51 +1,23 @@
 <template>
-  <div class="products" id="products">
+  <div class="products" id="products" v-if="products">
     <div class="container">
       <h1 class="text-center p-5">Our Products</h1>
       <div class="row">
-        <div class="col-md-4">
-          <a href="#" class="product-card">
-            <div class="card product-item">
-              <img src="/img/png/shirts/2.png" class="card-img-top" alt="..." />
-              <div class="card-body">
-                <h5 class="card-title">Bayern Munchen Shirt</h5>
-                <p
-                  class="card-text"
-                >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non nesciunt earum voluptatibus hic sint inventore?</p>
-                <div class="price">799 MAD</div>
+        <div class="col-md-4" v-for="p in products" :key="p.id">
+          <div class="card product-item">
+            <Carousel :per-page="1" :autoplay="true" :autoplayHoverPause="true">
+              <Slide v-for="(image,index) in p.images" :key="index">
+                <img :src="image" class="card-img-top" alt="..." />
+              </Slide>
+            </Carousel>
+            <div class="card-body">
+              <h5 class="card-title">{{p.name}}</h5>
+              <div class="d-flex justify-content-between">
+                <div class="price">${{p.price}}</div>
+                <AddToCart :id="p.id" :name="p.name" :price="p.price" :imgUrl="p.images[0]" />
               </div>
             </div>
-          </a>
-        </div>
-
-        <div class="col-md-4">
-          <a href="#" class="product-card">
-            <div class="card product-item">
-              <img src="/img/png/shirts/3.png" class="card-img-top" alt="..." />
-              <div class="card-body">
-                <h5 class="card-title">Barcelona Shirt</h5>
-                <p
-                  class="card-text"
-                >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut hic, explicabo est nesciunt voluptate porro!</p>
-                <div class="price">799 MAD</div>
-              </div>
-            </div>
-          </a>
-        </div>
-
-        <div class="col-md-4">
-          <a href="#" class="product-card">
-            <div class="card product-item">
-              <img src="/img/png/shirts/4.png" class="card-img-top" alt="..." />
-              <div class="card-body">
-                <h5 class="card-title">Man Utd Shirt</h5>
-                <p
-                  class="card-text"
-                >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus nobis corrupti et, incidunt quidem praesentium.</p>
-                <div class="price">799 MAD</div>
-              </div>
-            </div>
-          </a>
+          </div>
         </div>
       </div>
     </div>
@@ -53,8 +25,30 @@
 </template>
 
 <script>
+import { db } from "../firebase";
+import { Carousel, Slide } from "vue-carousel";
+import AddToCart from "@/components/AddToCart.vue";
+
 export default {
-  name: "Products"
+  name: "Products",
+  components: {
+    Carousel,
+    Slide,
+    AddToCart
+  },
+  firestore() {
+    return {
+      products: db.collection("products")
+    };
+  },
+  data() {
+    return {
+      products: []
+    };
+  },
+  created() {
+    console.log(this.products);
+  }
 };
 </script>
 
@@ -74,10 +68,11 @@ export default {
   padding: 5px 10px;
   border-radius: 5px;
   text-align: center;
+  width: 50%;
   /*text-transform: uppercase;*/
 }
-.product-card {
-  text-decoration: none;
-  color: #232b2b;
+
+.card-title {
+  height: 100px !important;
 }
 </style>

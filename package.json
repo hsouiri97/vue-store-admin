@@ -15,7 +15,13 @@
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
     "vue": "^2.6.10",
-    "vue-router": "^3.0.3"
+    "vue-carousel": "^0.18.0",
+    "vue-country-region-select": "^2.0.10",
+    "vue-firestore": "^0.3.22",
+    "vue-router": "^3.0.3",
+    "vue-tel-input": "^3.0.0",
+    "vue2-editor": "^2.9.1",
+    "vuex": "^3.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",
@@ -25,8 +31,11 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "install": "^0.13.0",
+    "npm": "^6.10.2",
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
+    "sweetalert2": "^8.15.1",
     "vue-template-compiler": "^2.6.10"
   }
 }

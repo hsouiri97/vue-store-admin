@@ -88,7 +88,7 @@
                     class="form-control"
                     id="name"
                     v-model="name"
-                    placeholder="Your nice name"
+                    placeholder="Full Name"
                   />
                 </div>
 
@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import { fb } from "../firebase";
+import { fb, db } from "../firebase";
 export default {
   name: "GetStarted",
   data() {
@@ -143,7 +143,19 @@ export default {
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(user => {
           $("#get-started").modal("hide");
-          this.$router.replace("admin");
+          console.log(user.user.uid);
+          db.collection("profiles")
+            .doc(user.user.uid)
+            .set({
+              name: this.name,
+              country: null,
+              region: null,
+              phone: null,
+              address: null,
+              zipCode: null,
+              imgUrl: null
+            });
+          this.$router.replace("admin/profile2");
         })
         .catch(function(error) {
           // Handle Errors here.
@@ -157,7 +169,7 @@ export default {
         .signInWithEmailAndPassword(this.email, this.password)
         .then(() => {
           $("#get-started").modal("hide");
-          this.$router.replace("admin");
+          this.$router.replace("admin/profile2");
         })
         .catch(function(error) {
           // Handle Errors here.

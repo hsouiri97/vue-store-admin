@@ -1,14 +1,16 @@
-import firebase from 'firebase'; 
+import firebase from "firebase";
+require("firebase/firestore");
 
 var firebaseConfig = {
-    apiKey: "AIzaSyCjHNAcbmKoByfz_b7k9__o9uS-06ixn0A",
-    authDomain: "vue-firebase-ecommerce.firebaseapp.com",
-    databaseURL: "https://vue-firebase-ecommerce.firebaseio.com",
-    projectId: "vue-firebase-ecommerce",
-    storageBucket: "",
-    messagingSenderId: "1019118550352",
-    appId: "1:1019118550352:web:e0531361f723354f"
-  };
-  // Initialize Firebase
-  export const fb = firebase.initializeApp(firebaseConfig);
-  export const au = fb.auth();
+  apiKey: process.env.VUE_APP_FIREBASE_KEY,
+  authDomain: "vue-firebase-ecommerce.firebaseapp.com",
+  databaseURL: "https://vue-firebase-ecommerce.firebaseio.com",
+  projectId: "vue-firebase-ecommerce",
+  storageBucket: "vue-firebase-ecommerce.appspot.com",
+  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGE_ID,
+  appId: process.env.VUE_APP_FIREBASE_APP_ID
+};
+// Initialize Firebase
+export const fb = firebase.initializeApp(firebaseConfig);
+export const db = firebase.firestore();
+//export const storageRef = firebase.storage().ref();

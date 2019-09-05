@@ -22,24 +22,22 @@ const router = new Router({
       meta: { requiresAuth: true },
       children: [
         {
-          path: "overview",
-          name: "overview",
-          component: () => import("./views/Admin/Overview.vue")
-        },
-        {
           path: "products",
           name: "admin-products",
+          meta: { requiresEmailVerified: true },
           component: () => import("./views/Admin/Products.vue")
         },
         {
           path: "orders",
           name: "admin-orders",
+          meta: { requiresEmailVerified: true },
           component: () => import("./views/Admin/Orders.vue")
         },
+
         {
-          path: "profile",
-          name: "admin-profile",
-          component: () => import("./views/Admin/Profile.vue")
+          path: "profile2",
+          name: "admin-profile2",
+          component: () => import("./views/Admin/Profile2.vue")
         }
       ]
     },
@@ -71,18 +69,28 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const currentUser = fb.auth().currentUser;
+  const requiresEmailVerified = to.matched.some(
+    record => record.meta.requiresEmailVerified
+  );
 
   if (requiresAuth && !currentUser) {
-    next('/')
+    next("/");
   } else if (requiresAuth && currentUser) {
-    next()
+    {
+      const emailVerified = currentUser.emailVerified;
+      if (requiresEmailVerified && !emailVerified) {
+        next("/admin/profile2");
+      } else if (requiresEmailVerified && emailVerified) {
+        next();
+      } else {
+        next();
+      }
+    }
+  } else {
+    next(); // make sure to always call next()!
   }
-  else {
-    next() // make sure to always call next()!
-  }
-})
+});
 
 export default router;
