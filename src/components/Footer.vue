@@ -7,8 +7,7 @@
             <div class="col-md-3 col-sm-6 col-xs-12 segment-1 md-mb-30 sm-mb-30">
               <h3 class="third-h">Strong</h3>
               <p class="para">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. In tempore,
-                ad ut eos voluptatem quisquam repellendus doloremque voluptatibus sint laudantium.
+                
               </p>
             </div>
 
