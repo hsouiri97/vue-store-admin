@@ -2,8 +2,8 @@
   <div>
     <div class="home">
       <div class="home-welcome text-center mx-auto">
-        <h1 class="display-1">Bienvenue...</h1>
-        <button class="get-started-btn" @click="getStarted">S'identifier</button>
+        <h1 class="display-2">Bienvenue...</h1>
+        <button class="get-started-btn" @click="getStarted">Login</button>
       </div>
       <div class="home-back"></div>
     </div>
@@ -46,7 +46,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.81);
 }
 .home {
   position: fixed;
