@@ -33,11 +33,16 @@ const router = new Router({
           meta: { requiresEmailVerified: true },
           component: () => import("./views/Admin/Orders.vue")
         },
-
         {
           path: "profile2",
           name: "admin-profile2",
           component: () => import("./views/Admin/Profile2.vue")
+        },
+        {
+          path: "archives",
+          name: "admin-archives",
+          meta: { requiresEmailVerified: true },
+          component: () => import("./views/Admin/Archives.vue")
         }
       ]
     },

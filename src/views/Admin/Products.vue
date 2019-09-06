@@ -337,7 +337,7 @@ export default {
     async saveNewProduct() {
       var urls = await this.uploadImages();
       //that code below should be executed only if the function above finished its work properly
-      this.product.created_at = new Date().toString();
+      this.product.created_at = new Date().toLocaleString();
       //converting values
       this.product.price = parseFloat(this.product.price);
       this.product.quantity = parseFloat(this.product.quantity);
@@ -389,7 +389,14 @@ export default {
     async updateProduct() {
       var urls = await this.uploadImages();
 
-      this.product.updateed_at = new Date().toString();
+      this.product.updateed_at = new Date().toLocaleString();
+
+      //converting values
+      this.product.price = parseFloat(this.product.price);
+      this.product.quantity = parseFloat(this.product.quantity);
+      this.product.count = 0;
+      this.product.inCart = false;
+      this.product.total = 0;
 
       if (urls) {
         urls.forEach(url => {

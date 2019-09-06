@@ -1,14 +1,14 @@
 <template>
-  <div class="orders">
+  <div class="archive">
     <div class="container h-100">
       <div class="intro h-100">
         <div class="row h-100 justify-content-center align-items-center">
           <div class="col-md-6">
-            <h3>Page des commandes</h3>
+            <h3>Page des archives</h3>
             <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eos laudantium sit doloremque fugit ea cum voluptas eveniet, minus voluptatem nostrum ab provident soluta non distinctio praesentium dolore, unde vel ullam!</p>
           </div>
           <div class="col-md-6">
-            <img src="../../assets/admin/orders.svg" alt class="img-fluid" />
+            <img src="../../assets/admin/archives.svg" alt class="img-fluid" />
           </div>
         </div>
         <hr />
@@ -23,15 +23,15 @@
               <tr>
                 <th>Nom du client</th>
                 <th>Nombre de produits</th>
-                <th>Date Created</th>
+                <th>Date Créée</th>
                 <th>Details</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(order, index) in orders" v-bind:key="index">
-                <td>{{order.client.address.recipient_name}}</td>
-                <td>{{order.order.length}}</td>
-                <td>{{order.dateCreated}}</td>
+              <tr v-for="(archive, index) in archives" v-bind:key="index">
+                <td>{{archive.client.address.recipient_name}}</td>
+                <td>{{archive.order.length}}</td>
+                <td>{{archive.dateCreated}}</td>
 
                 <td>
                   <button class="btn btn-info" @click="showDetails(index)">Plus de details</button>
@@ -104,29 +104,27 @@
                         <th>prix unitaire</th>
                         <th>quantité</th>
                         <th>quantité totale (Au moment de l'achat)</th>
-                        <th>quantité d'entrepôt (Maintenant)</th>
                         <th>total</th>
                       </tr>
                     </thead>
-                    <tbody v-if="order">
-                      <tr v-for="(p) in order" :key="p.id">
+                    <tbody v-if="archive">
+                      <tr v-for="(p) in archive" :key="p.id">
                         <td>{{p.name}}</td>
                         <td>{{p.unitPrice}}</td>
                         <td>{{p.quantity}}</td>
                         <td>{{p.totalQuantity}}</td>
-                        <td>{{(tempProducts.filter(item => item.id === p.id)).map(p => p.quantity)[0]}}</td>
                         <td>
                           {{p.total}}
                           <span class="ml-1">DH</span>
                         </td>
                       </tr>
                       <tr>
-                        <td colspan="5"></td>
+                        <td colspan="4"></td>
 
                         <td class="table-danger">
                           <strong>
                             <em>
-                              {{orderTotal}}
+                              {{archiveTotal}}
                               <span class="ml-1">DH</span>
                             </em>
                           </strong>
@@ -140,18 +138,6 @@
             </div>
           </div>
           <!-- End Modal Body -->
-          <!-- End Modal Body -->
-          <!-- Modal Footer -->
-          <div class="modal-footer">
-            <button
-              v-if="!currentOrder.accepted"
-              type="button"
-              class="btn btn-primary"
-              @click="accept"
-            >Accepter</button>
-            <button v-else type="button" class="btn btn-danger" @click="archive">Archiver</button>
-          </div>
-          <!-- Modal Footer -->
         </div>
       </div>
     </div>
@@ -162,113 +148,36 @@
 <script>
 import { db } from "../../firebase";
 export default {
-  name: "AdminOrders",
+  name: "AdminArchives",
   data() {
     return {
-      orders: [],
+      archives: [],
       clients: [],
-      ordersProducts: [],
-      ordersTotals: [],
+      archivesProducts: [],
+      archivesTotals: [],
       client: null,
-      order: [],
-      orderTotal: null,
-      currentOrder: {},
-      products: [],
-      tempProducts: []
+      archive: [],
+      archiveTotal: null,
+      currentArchive: {}
     };
   },
   firestore() {
     return {
-      orders: db.collection("orders").where("archived", "==", false),
-      products: db.collection("products")
+      archives: db.collection("orders").where("archived", "==", true)
     };
   },
   methods: {
     showDetails(index) {
       this.client = this.clients[index];
-      this.order = this.ordersProducts[index];
-      this.orderTotal = this.ordersTotals[index];
-      this.currentOrder = this.orders[index];
-
-      this.order.map(item => {
-        this.tempProducts.push(...this.products.filter(p => p.id === item.id));
-      });
-
-      /*this.order.map(items => {
-        items.map(item => {
-          console.log("item.id: ", item.id);
-
-          this.tempProducts = [
-            "",
-            ...this.products.filter(p => p.id === item.id)
-          ];
-        });
-      });*/
-
+      this.archive = this.archivesProducts[index];
+      this.archiveTotal = this.archivesTotals[index];
+      this.currentArchive = this.archives[index];
       $("#details-modal").modal("show");
     },
     reset() {
       this.client = null;
-      this.order = [];
-      this.orderTotal = null;
-      this.tempProducts = [];
-    },
-
-    accept() {
-      //let tempProducts = [];
-      this.order.map(item => {
-        const totalQuantity = this.tempProducts
-          .filter(p => p.id === item.id)
-          .map(product => product.quantity)[0];
-        const quantity = item.quantity;
-
-        if (totalQuantity >= quantity) {
-          let newQuantity = totalQuantity - quantity;
-          console.log(totalQuantity, quantity, newQuantity);
-
-          this.$firestore.products.doc(item.id).update({
-            quantity: newQuantity
-          });
-          // this.$firestore.orders.doc(this.currentOrder.id).update({
-          //   accepted: true
-          // });
-          return db
-            .collection("orders")
-            .doc(this.currentOrder.id)
-            .update({
-              accepted: true
-            })
-            .then(() => {
-              console.log("Document successfully updated! from accept");
-              $("#details-modal").modal("hide");
-            })
-            .catch(error => {
-              // The document probably doesn't exist.
-              console.error("Error updating document from accept: ", error);
-            });
-        } else {
-          alert(
-            "Vous ne pouvez pas accepter cette commande, la quantité de produit dans votre entrepôt n'est pas suffisante."
-          );
-          $("#details-modal").modal("hide");
-        }
-      });
-    },
-    archive() {
-      return db
-        .collection("orders")
-        .doc(this.currentOrder.id)
-        .update({
-          archived: true
-        })
-        .then(() => {
-          console.log("Document successfully updated! from archive");
-          $("#details-modal").modal("hide");
-        })
-        .catch(error => {
-          // The document probably doesn't exist.
-          console.error("Error updating document from archive: ", error);
-        });
+      this.archive = [];
+      this.archiveTotal = null;
     }
   },
   mounted() {
@@ -277,24 +186,24 @@ export default {
     });
   },
   updated() {
-    if (this.orders.length > 0) {
-      this.clients = this.orders.map(order => {
+    if (this.archives.length > 0) {
+      this.clients = this.archives.map(archive => {
         return {
-          name: order.client.address.recipient_name,
-          email: order.client.email,
-          city: order.client.address.city,
-          country: order.client.address.country_code,
+          name: archive.client.address.recipient_name,
+          email: archive.client.email,
+          city: archive.client.address.city,
+          country: archive.client.address.country_code,
           address:
-            order.client.address.line1 +
-            (order.client.address.line2
-              ? "\n" + order.client.address.line2
+            archive.client.address.line1 +
+            (archive.client.address.line2
+              ? "\n" + archive.client.address.line2
               : ""),
-          zipCode: order.client.address.postal_code
+          zipCode: archive.client.address.postal_code
         };
       });
 
-      this.ordersProducts = this.orders.map(item => item.order);
-      this.ordersTotals = this.orders.map(item => item.orderTotal);
+      this.archivesProducts = this.archives.map(item => item.order);
+      this.archivesTotals = this.archives.map(item => item.orderTotal);
     }
   }
 };

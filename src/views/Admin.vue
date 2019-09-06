@@ -65,6 +65,12 @@
                   <span>Commandes</span>
                 </router-link>
               </li>
+              <li>
+                <router-link to="/admin/archives">
+                  <i class="fa fa-archive"></i>
+                  <span>Archives</span>
+                </router-link>
+              </li>
 
               <li>
                 <a href="#" @click="logout()">
