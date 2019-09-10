@@ -88,6 +88,14 @@ router.beforeEach((to, from, next) => {
       if (requiresEmailVerified && !emailVerified) {
         next("/admin/profile2");
       } else if (requiresEmailVerified && emailVerified) {
+        currentUser
+          .getIdToken(true)
+          .then(() => {
+            currentUser.reload();
+          })
+          .catch(error => {
+            console.log("error reloading the user: ", error);
+          });
         next();
       } else {
         next();
